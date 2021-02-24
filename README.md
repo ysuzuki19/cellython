@@ -1,4 +1,4 @@
-# Cellython (Experimental)
+# Cellython (under development)
 python script with cell.
 
 
