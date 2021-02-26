@@ -14,7 +14,7 @@ $ git clone https://github.com/ysuzuki19/cellython
 $ cd api
 $ python -m venv .venv
 $ source .venv/bin/activate
-$ pip install flask python-dotenv
+$ pip install -r requirements.txt
 $ flask run
 ```
 
