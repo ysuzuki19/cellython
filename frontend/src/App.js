@@ -1,36 +1,10 @@
-import React, { useState, useEffect, useRef, useReducer, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ContentEditable from "react-contenteditable";
 
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
 
-
-const Store = React.createContext();
-
-const initialState = {
-  data: [['1', '2', '3'], ['4', '5', '6']],
-  view: [['1', '2', '3'], ['4', '5', '6']],
-}
-const Provider = ({children}) => {
-  const [state, dispatch] = useReducer(reducer, initialState)
-  return <Store.Provider value={{state, dispatch}}>{children}</Store.Provider>
-}
-
-function reducer(state, action) {
-  const i = action.payload.i
-  const j = action.payload.j
-
-  switch (action.type) {
-    case 'update':
-      state.data[i][j] = action.payload.text
-      return {...state};
-    case 'reset':
-      state.data[i][j] = ''
-      return {...state};
-    default:
-      throw new Error();
-  }
-}
+import { Store } from './context';
 
 function Cell(props) {
   const {state, dispatch} = useContext(Store);
@@ -40,12 +14,16 @@ function Cell(props) {
 
   const style_cell = {
     border: '1px solid black',
+    boxSizing: 'border-box',
     overflow: 'hidden',
-    height: '25px',
-    maxHeight: '25px',
+    height: '30px',
+    maxHeight: '30px',
     width: '80px',
     maxWidth: '80px',
-    float: 'left'
+    float: 'left',
+  };
+
+  const style_editor = {
   };
 
   const handleChange = evt => {
@@ -82,16 +60,30 @@ function Cell(props) {
 function Sheet() {
   const {state, dispatch} = useContext(Store);
 
-  const [focus, setFocus] = useState({i:0, j:0});
-  const [range, setRange] = useState({from:{i:0,j:0}, to:{i:0,j:0}});
+  //const [focus, setFocus] = useState({i:0, j:0});
+  //const [range, setRange] = useState({from:{i:0,j:0}, to:{i:0,j:0}});
 
+  useEffect(() => {
+    dispatch({
+      type: 'init',
+      payload: {}
+    });
+  }, []);
+
+  console.log('in sheet', state.data);
+  //if(!state.data || !state.data[0]) {
+  if(!state.data) {
+    return null
+  }
+
+  console.log('data exist', state.data);
   return(
-    <div class="sheet">
+    <div className="sheet">
       {state.data.map((row, i) => {
         return(
-          <div>
+          <div key={i}>
             {row.map((elm, j) => {
-              return <Cell i={i} j={j} />
+              return <Cell key={j} i={i} j={j} />
             })}
           </div>
         )
@@ -101,22 +93,13 @@ function Sheet() {
 }
 
 function App() {
-  const [currentTime, setCurrentTime] = useState(0);
-
-  useEffect(() => {
-    fetch('/api/time').then(res => res.json()).then(data => {
-      setCurrentTime(data.time);
-    });
-  }, []);
+  const {state, dispatch} = useContext(Store);
 
   return (
     <div className="App">
-      <Provider>
-        <header className="App-header">
-          <p>The current time is {currentTime}.</p>
-          <Sheet />
-        </header>
-      </Provider>
+      <header className="App-header">
+        <Sheet />
+      </header>
     </div>
   );
 }
