@@ -18,28 +18,43 @@ const Provider = ({children}) => {
   );
 }
 
-async function reducer(state, action) {
+function reducer(state, action) {
   const i = action.payload.i
   const j = action.payload.j
 
   switch (action.type) {
     case 'update':
       state.data[i][j] = action.payload.text
-      return {...state};
+      break;
     case 'reset':
       state.data[i][j] = ''
-      return {...state};
+      break;
     case 'init':
-      await fetch('/init')
+      //let matrix;
+      let updated = false;
+      fetch('/init')
         .then(res => res.json())
           .then(data => {
             state.data = data.array
+            console.log('updating...');
+            //matrix = data.array
+            updated = true;
       });
       console.log('updated', state.data);
-      return {...state};
+
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+      //do {
+        //sleep(100);
+        //console.log('blocking...');
+      //} while (!updated);
+      break;
     default:
       throw new Error();
   }
+  return {...state};
 }
 
 export { Store, Provider };

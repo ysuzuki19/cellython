@@ -10,7 +10,6 @@ function Cell(props) {
   const {state, dispatch} = useContext(Store);
   const i = props.i;
   const j = props.j;
-  const value = state.data[i][j]
 
   const style_cell = {
     border: '1px solid black',
@@ -48,7 +47,7 @@ function Cell(props) {
 
   return(
     <ContentEditable
-      html={value}
+      html={state.data[i][j]}
       onChange={handleChange}
       onBlur={handleBlur}
       onFocus={handleFocus}
@@ -70,6 +69,8 @@ function Sheet() {
     });
   }, []);
 
+  //console.log('in sheet', state.data);
+  console.log('in sheet', state);
   console.log('in sheet', state.data);
   //if(!state.data || !state.data[0]) {
   if(!state.data) {
